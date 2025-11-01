@@ -1,72 +1,124 @@
-// 신고 화면 - 사용자가 교통 이벤트를 직접 등록
+// 신고 화면 - 사용자가 교통 이벤트를 직접 등록하는 화면
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+} from "react-native";
+import * as Location from "expo-location";
 import { useTrafficStore } from "../src/store/useTrafficStore";
 
 export default function Report() {
-    const addEvent = useTrafficStore((s) => s.addEvent); // 전역 스토어에 이벤트 추가 함수
-    const [type, setType] = useState("");
-    const [locationText, setLocationText] = useState("");
-    const [description, setDescription] = useState("");
+    const addReport = useTrafficStore((s) => s.addReport);
+    const [type, setType] = useState(""); // 사건 유형 (사고 / 공사 / 정체 등)
+    const [locationText, setLocationText] = useState(""); // 입력 주소
+    const [description, setDescription] = useState(""); // 상세 설명
+    const [loading, setLoading] = useState(false); // 로딩 상태
 
     // 신고 버튼 클릭 시 실행
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!type || !locationText || !description) {
             Alert.alert("입력 오류", "모든 항목을 입력해주세요.");
             return;
         }
 
-        // 새로운 이벤트 추가 (기본 위치는 강남역 근처)
-        addEvent({
-            type,
-            locationText,
-            description,
-            latitude: 37.4979,
-            longitude: 127.0276,
-            source: "user",
-        });
+        try {
+            setLoading(true);
 
-        Alert.alert("신고 완료", "신고가 접수되었습니다.");
-        setType("");
-        setLocationText("");
-        setDescription("");
+            // 주소 → 위도·경도 변환
+            const geo = await Location.geocodeAsync(locationText);
+            if (!geo || geo.length === 0) {
+                Alert.alert("주소 오류", "입력한 주소를 찾을 수 없습니다.");
+                setLoading(false);
+                return;
+            }
+
+            const { latitude, longitude } = geo[0];
+
+            // 전역 스토어에 신고 데이터 추가
+            addReport({
+                type,
+                locationText,
+                description,
+                latitude,
+                longitude,
+                source: "user",
+            });
+
+            // 성공 메시지 및 입력 초기화
+            Alert.alert("신고 완료", "신고가 정상적으로 접수되었습니다.");
+            setType("");
+            setLocationText("");
+            setDescription("");
+        } catch (error) {
+            console.error("신고 처리 오류:", error);
+            Alert.alert("에러", "신고 처리 중 문제가 발생했습니다.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>교통정보 신고</Text>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.title}>교통정보 신고</Text>
 
-            {/* 입력 폼 */}
-            <TextInput
-                placeholder="신고 유형 (사고 / 공사 / 행사)"
-                style={styles.input}
-                value={type}
-                onChangeText={setType}
-            />
-            <TextInput
-                placeholder="위치 (예: 강남대로 역삼역 인근)"
-                style={styles.input}
-                value={locationText}
-                onChangeText={setLocationText}
-            />
-            <TextInput
-                placeholder="상세 설명을 입력해주세요..."
-                style={[styles.input, styles.textArea]}
-                value={description}
-                onChangeText={setDescription}
-                multiline
-            />
+                <TextInput
+                    placeholder="신고 유형 (사고 / 공사 / 정체)"
+                    style={styles.input}
+                    value={type}
+                    onChangeText={setType}
+                />
+                <TextInput
+                    placeholder="주소를 입력하세요 (예: 충주시청)"
+                    style={styles.input}
+                    value={locationText}
+                    onChangeText={setLocationText}
+                />
+                <TextInput
+                    placeholder="상세 설명을 입력해주세요..."
+                    style={[styles.input, styles.textArea]}
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline
+                />
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>신고하기</Text>
-            </TouchableOpacity>
-        </View>
+                <TouchableOpacity
+                    style={[styles.button, loading && { backgroundColor: "#ccc" }]}
+                    onPress={handleSubmit}
+                    disabled={loading}
+                >
+                    <Text style={styles.buttonText}>
+                        {loading ? "등록 중..." : "신고하기"}
+                    </Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff", padding: 20 },
-    title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
+    container: {
+        flexGrow: 1,
+        backgroundColor: "#fff",
+        padding: 20,
+        justifyContent: "center",
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginBottom: 24,
+        textAlign: "center",
+    },
     input: {
         borderWidth: 1,
         borderColor: "#ccc",
