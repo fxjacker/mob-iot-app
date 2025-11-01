@@ -1,12 +1,12 @@
-// 알림 화면 - 등록된 교통 이벤트 리스트 표시
+// 알림 화면 - 등록된 교통 이벤트를 리스트 형태로 표시
 import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useTrafficStore } from "../src/store/useTrafficStore";
 
 export default function AlertTab() {
-    const events = useTrafficStore((s) => s.events); // 전역 이벤트 가져오기
+    const events = useTrafficStore((s) => s.events); // 전역 이벤트 상태 가져오기
 
-    // 이벤트 종류별 색상
+    // 이벤트 종류별 색상 반환 함수
     const getTypeColor = (type: string) => {
         switch (type) {
             case "사고":
@@ -20,7 +20,7 @@ export default function AlertTab() {
         }
     };
 
-    // 등록된 이벤트가 없을 때
+    // 등록된 이벤트가 없을 때 표시
     if (events.length === 0) {
         return (
             <View style={styles.emptyContainer}>
@@ -29,21 +29,25 @@ export default function AlertTab() {
         );
     }
 
+    // 이벤트가 있을 때 FlatList로 표시
     return (
         <View style={styles.container}>
             <Text style={styles.header}>실시간 알림</Text>
 
-            {/* 이벤트 목록 출력 */}
             <FlatList
                 data={events}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={[styles.card, { borderLeftColor: getTypeColor(item.type) }]}>
+                        {/* 이벤트 종류 */}
                         <Text style={[styles.type, { color: getTypeColor(item.type) }]}>
                             {item.type}
                         </Text>
+                        {/* 상세 설명 */}
                         <Text style={styles.title}>{item.description}</Text>
+                        {/* 위치 정보 */}
                         <Text style={styles.location}>{item.locationText}</Text>
+                        {/* 출처 정보 */}
                         <Text style={styles.source}>
                             {item.source === "user" ? "사용자 신고" : "BLE 감지"}
                         </Text>
@@ -54,6 +58,7 @@ export default function AlertTab() {
     );
 }
 
+// 스타일 정의
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#fff", padding: 16 },
     header: { fontSize: 20, fontWeight: "bold", marginBottom: 16, color: "#333" },
