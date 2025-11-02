@@ -1,4 +1,3 @@
-// src/store/useTrafficStore.ts
 import { create } from "zustand";
 
 export type TrafficEvent = {
@@ -13,8 +12,8 @@ export type TrafficEvent = {
 };
 
 type TrafficStore = {
-    events: TrafficEvent[];  // BLE 및 사용자 이벤트 목록
-    reports: TrafficEvent[]; // ✅ 신고 목록 (Circle 표시용)
+    events: TrafficEvent[];   // BLE 이벤트 목록
+    reports: TrafficEvent[];  // 사용자 신고 목록 (지도 Circle 표시용)
     addEvent: (event: Omit<TrafficEvent, "id" | "timestamp">) => void;
     addReport: (event: Omit<TrafficEvent, "id" | "timestamp">) => void;
     clearAll: () => void;
@@ -22,30 +21,32 @@ type TrafficStore = {
 
 export const useTrafficStore = create<TrafficStore>((set) => ({
     events: [],
-    reports: [], // ✅ 새로 추가됨
+    reports: [],
 
-    // ✅ BLE 또는 일반 이벤트 추가
+    // BLE 감지 이벤트 추가
     addEvent: (eventData) =>
         set((state) => {
+            const timestamp = Date.now();
             const newEvent: TrafficEvent = {
                 ...eventData,
-                id: Math.random().toString(36).slice(2),
-                timestamp: Date.now(),
+                id: `${Math.random().toString(36).slice(2)}_${timestamp}`, // ← timestamp 추가
+                timestamp,
             };
             return { events: [newEvent, ...state.events] };
         }),
 
-    // ✅ 신고 이벤트 추가 (Home에서 Circle로 표시)
+    // 사용자 신고 추가 (지도에 Circle 표시)
     addReport: (eventData) =>
         set((state) => {
+            const timestamp = Date.now();
             const newReport: TrafficEvent = {
                 ...eventData,
-                id: Math.random().toString(36).slice(2),
-                timestamp: Date.now(),
+                id: `${Math.random().toString(36).slice(2)}_${timestamp}`, // ← timestamp 추가
+                timestamp,
             };
             return { reports: [newReport, ...state.reports] };
         }),
 
-    // ✅ 전체 초기화
+    // 전체 초기화
     clearAll: () => set({ events: [], reports: [] }),
 }));
