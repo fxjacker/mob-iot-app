@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules/
+# (혹시 일부 OS에서 인식 안 될 때를 대비)
+**/node_modules/
 
 # Expo
 .expo/
@@ -9,7 +11,9 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native build outputs
+android/
+ios/
 .kotlin/
 *.orig.*
 *.jks
@@ -21,7 +25,7 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
-# debug
+# Debug logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
@@ -30,14 +34,18 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# Local env files
 .env*.local
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-app-example
+# Example app
+app-example/
 
-# generated native folders
-/ios
-/android
+# IDE / Editor
+.vscode/
+.idea/
+
+# OS cache
+Thumbs.db
