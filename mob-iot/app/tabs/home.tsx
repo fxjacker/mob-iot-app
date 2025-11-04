@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import MapView, { Circle, Marker } from "react-native-maps";
+import MapView, { Marker, Circle } from "react-native-maps"; // ✅ 이것만 쓰면 됨
 import * as Location from "expo-location";
 import { useTrafficStore } from "../src/store/useTrafficStore";
 import useBleListener from "../src/hooks/useBleListener";
@@ -39,8 +39,6 @@ export default function Home() {
       id: r.id,
       latitude: r.latitude,
       longitude: r.longitude,
-      type: r.type,
-      description: r.description,
       color:
         r.type === "사고"
           ? "rgba(255,0,0,0.4)"
@@ -52,7 +50,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} region={region} showsUserLocation>
+      <MapView style={styles.map} region={region} showsUserLocation={true}>
         {events.map((ev, idx) => (
           <Marker
             key={`event-${idx}`}
@@ -68,8 +66,11 @@ export default function Home() {
         {reportCircles.map((r) => (
           <Circle
             key={r.id}
-            center={{ latitude: r.latitude, longitude: r.longitude }}
-            radius={10} // ← 반경 10m로 축소
+            center={{
+              latitude: r.latitude,
+              longitude: r.longitude,
+            }}
+            radius={10}
             strokeColor={r.color}
             fillColor={r.color}
           />
