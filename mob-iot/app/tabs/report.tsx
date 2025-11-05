@@ -125,14 +125,15 @@ export default function Report() {
         {renderSeverityButton("경미", "#8E8E93")}
         {renderSeverityButton("보통", "#FF9500")}
         {renderSeverityButton("심각", "#FF3B30")}
-      </View>
+        {renderSeverityButton("행사", "#007AFF")}
+      </View>-
 
       {/* 위치 */}
       <Text style={styles.subtitle}>위치</Text>
       <View style={styles.inputContainer}>
         <Ionicons name="location-outline" size={18} color="#888" style={styles.icon} />
         <TextInput
-          placeholder="예: 강남대로 논현역 부근"
+          placeholder="예: 한국교통대 "
           style={styles.input}
           value={locationText}
           onChangeText={setLocationText}
