@@ -35,7 +35,7 @@ export default function useBleListener() {
                 const random = mockEvents[Math.floor(Math.random() * mockEvents.length)];
                 addEvent(random);
                 console.log("Mock BLE 이벤트 추가됨:", random);
-            }, 60000); // 1분마다 Mock 이벤트 추가
+            }, 300000); // 5분마다 Mock 이벤트 추가
 
             return () => clearInterval(interval);
         }
