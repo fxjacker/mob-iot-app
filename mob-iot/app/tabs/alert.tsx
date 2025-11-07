@@ -1,6 +1,6 @@
 // Alert.tsx
 import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { SafeAreaView, View, Text, FlatList, StyleSheet } from "react-native";
 import { useTrafficStore } from "../src/store/useTrafficStore";
 
 export default function Alert() {
@@ -30,44 +30,62 @@ export default function Alert() {
   // 알림이 없을 때
   if (allData.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>현재 등록된 알림이 없습니다.</Text>
-      </View>
+      <SafeAreaView style={styles.safe}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>현재 등록된 알림이 없습니다.</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   // 알림 목록 표시
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>실시간 알림</Text>
-      <FlatList
-        data={allData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.card,
-              { borderLeftColor: getTypeColor(item.type) },
-            ]}
-          >
-            <Text style={[styles.type, { color: getTypeColor(item.type) }]}>
-              {item.type}
-            </Text>
-            <Text style={styles.title}>{item.description}</Text>
-            <Text style={styles.location}>{item.locationText}</Text>
-            <Text style={styles.source}>
-              {item.source === "user" ? "사용자 신고" : "BLE 감지"}
-            </Text>
-          </View>
-        )}
-      />
-    </View>
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.container}>
+        <Text style={styles.header}>실시간 알림</Text>
+        <FlatList
+          data={allData}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View
+              style={[
+                styles.card,
+                { borderLeftColor: getTypeColor(item.type) },
+              ]}
+            >
+              <Text style={[styles.type, { color: getTypeColor(item.type) }]}>
+                {item.type}
+              </Text>
+              <Text style={styles.title}>{item.description}</Text>
+              <Text style={styles.location}>{item.locationText}</Text>
+              <Text style={styles.source}>
+                {item.source === "user" ? "사용자 신고" : "BLE 감지"}
+              </Text>
+            </View>
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
-  header: { fontSize: 20, fontWeight: "bold", marginBottom: 16, color: "#333" },
+  safe: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 16,
+    paddingTop: 30,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 16,
+    color: "#333",
+  },
   card: {
     backgroundColor: "#F9F9F9",
     padding: 12,
