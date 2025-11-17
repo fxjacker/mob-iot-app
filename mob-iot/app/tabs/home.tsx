@@ -45,8 +45,6 @@ export default function Home() {
       id: r.id,
       latitude: r.latitude,
       longitude: r.longitude,
-      type: r.type,
-      description: r.description,
       color:
         r.type === "사고"
           ? "rgba(255,0,0,0.4)"

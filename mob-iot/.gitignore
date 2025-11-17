@@ -1,52 +1,69 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Dependencies
 node_modules/
-# (혹시 일부 OS에서 인식 안 될 때를 대비)
 **/node_modules/
 
-# Expo
+# Expo / React Native
 .expo/
 .expo-shared/
 dist/
 web-build/
 expo-env.d.ts
+build/
 
-# Native build outputs
+# Native Build Outputs
 android/
 ios/
+.gradle/
 .kotlin/
-*.orig.*
+*.keystore
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
 
-# Metro
+# Metro Bundler
+.metro-cache/
 .metro-health-check*
 
-# Debug logs
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+expo-error.log*
 
-# macOS
-.DS_Store
-*.pem
-
-# Local env files
+# Environment
+.env
 .env*.local
-
-# TypeScript
-*.tsbuildinfo
-
-# Example app
-app-example/
+.env.development.local
+.env.production.local
+.env.test.local
 
 # IDE / Editor
 .vscode/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# OS cache
+# OS / System Files
+.DS_Store
 Thumbs.db
+*.pem
+*.orig.*
+*.tmp
+
+# TypeScript
+*.tsbuildinfo
+
+# Example / Test Apps
+app-example/
+example/
+test/
+tests/
+
+# Misc
+coverage/
+.cache/
+npm-debug.*
